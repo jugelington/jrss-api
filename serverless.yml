@@ -1,0 +1,51 @@
+service: jrss-api
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: prod
+  region: eu-west-1
+
+  # 'iamRoleStatements' defines the permission policy for the Lambda function.
+  # In this case Lambda functions are granted with permissions to access DynamoDB.
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:eu-west-1:*:*'
+
+functions:
+  add-feed:
+    handler: lambdas/add-feed.main
+    events:
+      - http:
+          path: feeds
+          method: post
+          cors: true
+          authorizer: aws_iam
+  get-feed:
+    handler: lambdas/get-feed.main
+    events:
+      - http:
+          path: feeds/{id}
+          method: get
+          cors: true
+          authorizer: aws_iam

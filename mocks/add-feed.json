@@ -1,0 +1,8 @@
+{
+  "body": "{\"objName\":\"guardian\",\"displayName\":\"Guardian\",\"tags\":[\"politics\"],\"url\":\"https://www.theguardian.com/world/rss\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
