@@ -1,0 +1,11 @@
+{
+  "body": "{\"objName\":\"guardian\",\"displayName\":\"Guardian - World News\",\"tags\":[\"politics\", \"current events\"],\"url\":\"https://www.theguardian.com/world/rss\"}",
+  "pathParameters": {
+    "id": "440d0550-294f-11e9-b520-c7269d882910"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
