@@ -65,3 +65,11 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  delete-feed:
+    handler: lambdas/delete-feed.main
+    events:
+      - http:
+          path: feeds/{id}
+          method: delete
+          cors: true
+          authorizer: aws_iam
