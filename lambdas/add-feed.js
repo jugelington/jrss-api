@@ -9,7 +9,6 @@ module.exports.main = async (event, context) => {
     Item: {
       userId: event.requestContext.identity.cognitoIdentityId,
       feedId: uuid.v1(),
-      objName: data.objName,
       displayName: data.displayName,
       tags: data.tags,
       url: data.url,
