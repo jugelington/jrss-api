@@ -1,129 +1,58 @@
-# Serverless Node.js Starter
+# JRSS API
 
-A Serverless starter that adds ES7 syntax, serverless-offline, environment variables, and unit test support. Part of the [Serverless Stack](http://serverless-stack.com) guide.
+This repo contains the Lambda functions for the serverless back end of [JRSS](https://github.com/jugelington/jrss) that allow interaction between JRSS and the DynamoDB database that stores user feeds; it uses Serverless to deploy the functions to AWS.
 
-[Serverless Node.js Starter](https://github.com/AnomalyInnovations/serverless-nodejs-starter) uses the [serverless-webpack](https://github.com/serverless-heaven/serverless-webpack) plugin, [Babel](https://babeljs.io), [serverless-offline](https://github.com/dherault/serverless-offline), and [Jest](https://facebook.github.io/jest/). It supports:
+## Prerequisites
 
-- **ES7 syntax in your handler functions**
-  - Use `import` and `export`
-- **Package your functions using Webpack**
-- **Run API Gateway locally**
-  - Use `serverless offline start`
-- **Support for unit tests**
-  - Run `npm test` to run your tests
-- **Sourcemaps for proper error messages**
-  - Error message show the correct line numbers
-  - Works in production with CloudWatch
-- **Automatic support for multiple handler files**
-  - No need to add a new entry to your `webpack.config.js`
-- **Add environment variables for your stages**
+- [Node.js](https://nodejs.org/en/download/)
+- [An AWS account](https://aws.amazon.com/cli/)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
+- [Serverless](https://serverless.com/framework/docs/getting-started/)
+- A [DynamoDB](https://aws.amazon.com/dynamodb/) database
+- [AWS Cognito](https://aws.amazon.com/cognito/) User and Identity pools
 
----
+If you are unsure how to setup anything AWS-related, I highly recommend following the guide at [serverless-stack.com](https://serverless-stack.com/).
 
-### Demo
+## Setup
 
-A demo version of this service is hosted on AWS - [`https://z6pv80ao4l.execute-api.us-east-1.amazonaws.com/dev/hello`](https://z6pv80ao4l.execute-api.us-east-1.amazonaws.com/dev/hello)
+Assuming you already have all of the prequisites set up, deploying this should be straightforward.
 
-And here is the ES7 source behind it
+All you should need to do is ensure the provider region in serverless.yml matches the region your database is in, and that the TableName in each of the Lambda functions is the name of your table.
 
-``` javascript
-export const hello = async (event, context) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: `Go Serverless v1.0! ${(await message({ time: 1, copy: 'Your function executed successfully!'}))}`,
-      input: event,
-    }),
-  };
-};
+Once you have done that, run the deploy command in bash:
 
-const message = ({ time, ...rest }) => new Promise((resolve, reject) =>
-  setTimeout(() => {
-    resolve(`${rest.copy} (with a delay)`);
-  }, time * 1000)
-);
+```
+$ sls deploy
 ```
 
-### Requirements
+Once deployment is complete, make a note of the endpoints generated, which you will need for the front end.
 
-- [Install the Serverless Framework](https://serverless.com/framework/docs/providers/aws/guide/installation/)
-- [Configure your AWS CLI](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
+## Endpoints
 
-### Installation
+### POST - https://[...].execute-api.eu-west-1.amazonaws.com/prod/feeds
 
-To create a new Serverless project.
+Takes an object of the format, and saves it to the database with the user as as one of its keys, and a generated feed ID as the other.
 
-``` bash
-$ serverless install --url https://github.com/AnomalyInnovations/serverless-nodejs-starter --name my-project
+```json
+{
+  "displayName": string,
+  "url": string,
+  "tags": array
+}
 ```
 
-Enter the new directory
+### GET - https://[...].execute-api.eu-west-1.amazonaws.com/prod/feeds/{id}
 
-``` bash
-$ cd my-project
-```
+Retrieves a feed by ID
 
-Install the Node.js packages
+### GET - https://[...].execute-api.eu-west-1.amazonaws.com/prod/feeds
 
-``` bash
-$ npm install
-```
+Retrieves all the feeds by the currently authenticated user.
 
-### Usage
+### PUT - https://[...].execute-api.eu-west-1.amazonaws.com/prod/feeds/{id}
 
-To run unit tests on your local
+Takes the same object as POST, but modifies the feed with the ID specified.
 
-``` bash
-$ npm test
-```
+### DELETE - https://[...].execute-api.eu-west-1.amazonaws.com/prod/feeds/{id}
 
-To run a function on your local
-
-``` bash
-$ serverless invoke local --function hello
-```
-
-To simulate API Gateway locally using [serverless-offline](https://github.com/dherault/serverless-offline)
-
-``` bash
-$ serverless offline start
-```
-
-Run your tests
-
-``` bash
-$ npm test
-```
-
-We use Jest to run our tests. You can read more about setting up your tests [here](https://facebook.github.io/jest/docs/en/getting-started.html#content).
-
-Deploy your project
-
-``` bash
-$ serverless deploy
-```
-
-Deploy a single function
-
-``` bash
-$ serverless deploy function --function hello
-```
-
-To add another function as a new file to your project, simply add the new file and add the reference to `serverless.yml`. The `webpack.config.js` automatically handles functions in different files.
-
-To add environment variables to your project
-
-1. Rename `env.example` to `env.yml`.
-2. Add environment variables for the various stages to `env.yml`.
-3. Uncomment `environment: ${file(env.yml):${self:provider.stage}}` in the `serverless.yml`.
-4. Make sure to not commit your `env.yml`.
-
-### Support
-
-- Send us an [email](mailto:contact@anoma.ly) if you have any questions
-- Open a [new issue](https://github.com/AnomalyInnovations/serverless-nodejs-starter/issues/new) if you've found a bug or have some suggestions.
-- Or submit a pull request!
-
-### Maintainers
-
-Serverless Node.js Starter is maintained by Frank Wang ([@fanjiewang](https://twitter.com/fanjiewang)) & Jay V ([@jayair](https://twitter.com/jayair)). [**Subscribe to our newsletter**](http://eepurl.com/cEaBlf) for updates. Send us an [email](mailto:contact@anoma.ly) if you have any questions.
+Deletes the feed with the ID specified.
