@@ -17,7 +17,9 @@ If you are unsure how to setup anything AWS-related, I highly recommend followin
 
 Assuming you already have all of the prequisites set up, deploying this should be straightforward.
 
-All you should need to do is ensure the provider region in serverless.yml matches the region your database is in, and that the TableName in each of the Lambda functions is the name of your table.
+In the serverless.yml, change 'service' from 'jrss-api'to whatever you want the name of your api to be, and change the region to the region you created your dynamo table in.
+
+In each of the Lambda functions, change the TableName is the name of your dynamo table.
 
 Once you have done that, run the deploy command in bash:
 
